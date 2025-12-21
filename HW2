@@ -1,0 +1,749 @@
+{
+  "updatedAt": "2025-12-21T17:51:09.892Z",
+  "createdAt": "2025-12-19T03:31:55.990Z",
+  "id": "kA81KTUGEimG5Fgp",
+  "name": "Travel Bot",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "authentication": "airtableTokenApi",
+        "baseId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "appRtWAYhQeGtX2hu"
+        },
+        "tableId": {
+          "__rl": true,
+          "value": "tblkLilg646LiLPHt",
+          "mode": "id"
+        },
+        "triggerField": "Created",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.airtableTrigger",
+      "typeVersion": 1,
+      "position": [
+        48,
+        0
+      ],
+      "id": "90e11d06-0776-4207-9854-d640f20b160b",
+      "name": "Airtable Trigger",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "iSJgtejEKSAUJb6N",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Act as a web developer backend.\nTarget City: {{ $json.fields.Name }}\n\nINSTRUCTION:\nGenerate the HTML source code for a travel guide page.\nReturn ONLY the raw HTML string. Do NOT use markdown code blocks (like ```html). Do NOT include any introductory text. Start directly with <!DOCTYPE html>.\n\nRules:\n1. Use standard HTML and CSS (internal styles).\n2. **Interactive Map:** Use the Leaflet.js library.\n   - Include Leaflet CSS & JS from unpkg CDN in the <head>.\n   - Initialize the map in a <script> tag at the bottom.\n    -Dont write a crossorigin and integrity vars in the <script>\n3. Content:\n   - H1 Title: \"{{ $json.fields.Name }}\"\n   - 3 Images: Use \"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){{ $json.fields.Name }}%20landmark?seed=1\" (vary seeds 1,2,3).\n   - Attractions List: 5 real top attractions in {{ $json.fields.Name }}.\n   - **Map Logic:**\n     - Create a <div id=\"map\"> with height: 400px.\n     - In the script, create an array of those 5 attractions with their real Latitude/Longitude.\n     - Loop through the array to add Markers to the map.\n     - Use 'map.fitBounds()' to automatically center the map on the pins.\n\nFinal Output Format: Pure HTML string only."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "dffc7873-9ac5-40eb-8c4b-5441722fe6ed",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7RHvWO9jRUbkhMCl",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        0
+      ],
+      "id": "52b0b5fa-3eaa-473b-8e18-bf6fcf36fc92",
+      "name": "Wait",
+      "webhookId": "80465634-e2c3-4250-9af3-fad7f5530b2e"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1008,
+        0
+      ],
+      "id": "651591c1-0e6c-4d66-8119-73984742800f",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "sendTo": "ari.guter@gmail.com",
+        "subject": "=Travel Guide for {{ $('Airtable Trigger').item.json.fields.Name }}",
+        "message": "=<div style=\"font-family: Arial, sans-serif; padding: 20px;\">   <h2>Your Guide to {{ $('Airtable Trigger').item.json.fields.Name }} is Ready!</h2>      <p>The AI has generated your custom interactive map and travel plan.</p>      <p><b>Action Required:</b> Click the button below to view the hosted webpage.</p>    <a href=\"{{ $execution.resumeUrl }}\"       style=\"background-color: #28a745; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;\">      👉 View Interactive Map & Guide   </a>    <p style=\"margin-top: 30px; font-size: 12px; color: #888;\">     Debug Link: {{ $execution.resumeUrl }}   </p> </div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "c43f05be-bf2b-4c59-8e23-44dcf717d1dd",
+      "name": "Send a message",
+      "webhookId": "7bbdecc3-7824-48fc-af0d-c769dba08f76",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "CnrFlvc7dRHZu5hC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "workflowId": {
+          "__rl": true,
+          "value": "http://localhost:5678/workflow/kA81KTUGEimG5Fgp",
+          "mode": "url"
+        },
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        0
+      ],
+      "id": "404b1698-6d65-4388-be89-a53578063740",
+      "name": "Get a workflow",
+      "credentials": {
+        "n8nApi": {
+          "id": "f353z3lTsWzQBo7l",
+          "name": "n8n account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const fileName = `${$json.name.replace(/[^a-z0-9_-]/gi, \"_\") || \"workflow\"}.json`;\nconst jsonContent = JSON.stringify($json, null, 2);\n\nreturn [\n  {\n    binary: {\n      data: await this.helpers.prepareBinaryData(Buffer.from(jsonContent), fileName, 'application/json'),\n    },\n    json: {\n      fileName,\n    },\n  },\n];\n"
+      },
+      "id": "47862433-5623-4319-8fb4-02b2b5c12a9b",
+      "name": "JSON to File",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        1472,
+        0
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/Gutismall",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "Afeka_Guterman",
+          "mode": "list",
+          "cachedResultName": "Afeka_Guterman",
+          "cachedResultUrl": "https://github.com/Gutismall/Afeka_Guterman"
+        },
+        "filePath": "HW2/n8n_Workflow.json",
+        "fileContent": "={{ JSON.stringify($('n8n Trigger').first().json.workflow, null, 2) }}",
+        "commitMessage": "Save Workflow"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "b351e8a3-03ee-4f24-8bfe-edab8a2fb3dc",
+      "name": "Create a file",
+      "webhookId": "478e37d0-8602-450e-9b70-6d927738bf6a",
+      "credentials": {
+        "githubApi": {
+          "id": "6wElnNbpqiy9Z5hf",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "delete",
+        "owner": {
+          "__rl": true,
+          "value": "https://github.com/Gutismall",
+          "mode": "url"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "Afeka_Guterman",
+          "mode": "list",
+          "cachedResultName": "Afeka_Guterman",
+          "cachedResultUrl": "https://github.com/Gutismall/Afeka_Guterman"
+        },
+        "filePath": "HW2/n8n_Workflow.json",
+        "commitMessage": "delete file"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        1712,
+        0
+      ],
+      "id": "be69153a-934a-437f-9ff4-69439e7d511c",
+      "name": "Delete a file",
+      "webhookId": "2ef3bb31-eac2-4d8a-9a24-8d7e08b710b0",
+      "executeOnce": false,
+      "credentials": {
+        "githubApi": {
+          "id": "6wElnNbpqiy9Z5hf",
+          "name": "GitHub account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Airtable Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a workflow": {
+      "main": [
+        [
+          {
+            "node": "JSON to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a file": {
+      "main": [
+        [
+          {
+            "node": "Create a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON to File": {
+      "main": [
+        [
+          {
+            "node": "Delete a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get a workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Airtable Trigger": {
+      "lastTimeChecked": "2025-12-21T17:38:31Z"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "b8d1ab4d-4154-41e2-b22d-5c1a3ec7244c",
+  "activeVersionId": "9dc8ea1c-13a0-433d-a50e-7a68b0a02d9c",
+  "versionCounter": 34,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2025-12-19T03:31:55.993Z",
+      "createdAt": "2025-12-19T03:31:55.993Z",
+      "role": "workflow:owner",
+      "workflowId": "kA81KTUGEimG5Fgp",
+      "projectId": "EDd0kGi6pxqa9hn1",
+      "project": {
+        "updatedAt": "2025-12-18T15:51:26.310Z",
+        "createdAt": "2025-12-18T15:44:06.306Z",
+        "id": "EDd0kGi6pxqa9hn1",
+        "name": "Ari Guterman <ari.guter@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "projectRelations": [
+          {
+            "updatedAt": "2025-12-18T15:44:06.307Z",
+            "createdAt": "2025-12-18T15:44:06.307Z",
+            "userId": "84267641-64ba-4a5e-b2ce-599124e9087e",
+            "projectId": "EDd0kGi6pxqa9hn1",
+            "user": {
+              "updatedAt": "2025-12-21T16:53:53.998Z",
+              "createdAt": "2025-12-18T15:44:06.169Z",
+              "id": "84267641-64ba-4a5e-b2ce-599124e9087e",
+              "email": "ari.guter@gmail.com",
+              "firstName": "Ari",
+              "lastName": "Guterman",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2025-12-18T15:51:49.211Z",
+                "personalization_survey_n8n_version": "2.0.3",
+                "automationGoalDevops": [
+                  "cloud-infrastructure-orchestration"
+                ],
+                "companyType": "education",
+                "role": "devops"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "kA81KTUGEimG5Fgp",
+                "userActivatedAt": 1766336033977
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2025-12-21",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2025-12-21T17:37:50.000Z",
+    "createdAt": "2025-12-21T17:37:43.748Z",
+    "versionId": "9dc8ea1c-13a0-433d-a50e-7a68b0a02d9c",
+    "workflowId": "kA81KTUGEimG5Fgp",
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "authentication": "airtableTokenApi",
+          "baseId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "appRtWAYhQeGtX2hu"
+          },
+          "tableId": {
+            "__rl": true,
+            "value": "tblkLilg646LiLPHt",
+            "mode": "id"
+          },
+          "triggerField": "Created",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.airtableTrigger",
+        "typeVersion": 1,
+        "position": [
+          48,
+          0
+        ],
+        "id": "90e11d06-0776-4207-9854-d640f20b160b",
+        "name": "Airtable Trigger",
+        "credentials": {
+          "airtableTokenApi": {
+            "id": "iSJgtejEKSAUJb6N",
+            "name": "Airtable account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-flash-latest",
+            "mode": "list",
+            "cachedResultName": "models/gemini-flash-latest"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "=Act as a web developer backend.\nTarget City: {{ $json.fields.Name }}\n\nINSTRUCTION:\nGenerate the HTML source code for a travel guide page.\nReturn ONLY the raw HTML string. Do NOT use markdown code blocks (like ```html). Do NOT include any introductory text. Start directly with <!DOCTYPE html>.\n\nRules:\n1. Use standard HTML and CSS (internal styles).\n2. **Interactive Map:** Use the Leaflet.js library.\n   - Include Leaflet CSS & JS from unpkg CDN in the <head>.\n   - Initialize the map in a <script> tag at the bottom.\n    -Dont write a crossorigin and integrity vars in the <script>\n3. Content:\n   - H1 Title: \"{{ $json.fields.Name }}\"\n   - 3 Images: Use \"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){{ $json.fields.Name }}%20landmark?seed=1\" (vary seeds 1,2,3).\n   - Attractions List: 5 real top attractions in {{ $json.fields.Name }}.\n   - **Map Logic:**\n     - Create a <div id=\"map\"> with height: 400px.\n     - In the script, create an array of those 5 attractions with their real Latitude/Longitude.\n     - Loop through the array to add Markers to the map.\n     - Use 'map.fitBounds()' to automatically center the map on the pins.\n\nFinal Output Format: Pure HTML string only."
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1,
+        "position": [
+          240,
+          0
+        ],
+        "id": "dffc7873-9ac5-40eb-8c4b-5441722fe6ed",
+        "name": "Message a model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "7RHvWO9jRUbkhMCl",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resume": "webhook",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          752,
+          0
+        ],
+        "id": "52b0b5fa-3eaa-473b-8e18-bf6fcf36fc92",
+        "name": "Wait",
+        "webhookId": "80465634-e2c3-4250-9af3-fad7f5530b2e"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          1008,
+          0
+        ],
+        "id": "651591c1-0e6c-4d66-8119-73984742800f",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "sendTo": "ari.guter@gmail.com",
+          "subject": "=Travel Guide for {{ $('Airtable Trigger').item.json.fields.Name }}",
+          "message": "=<div style=\"font-family: Arial, sans-serif; padding: 20px;\">   <h2>Your Guide to {{ $('Airtable Trigger').item.json.fields.Name }} is Ready!</h2>      <p>The AI has generated your custom interactive map and travel plan.</p>      <p><b>Action Required:</b> Click the button below to view the hosted webpage.</p>    <a href=\"{{ $execution.resumeUrl }}\"       style=\"background-color: #28a745; color: white; padding: 15px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;\">      👉 View Interactive Map & Guide   </a>    <p style=\"margin-top: 30px; font-size: 12px; color: #888;\">     Debug Link: {{ $execution.resumeUrl }}   </p> </div>",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          560,
+          0
+        ],
+        "id": "c43f05be-bf2b-4c59-8e23-44dcf717d1dd",
+        "name": "Send a message",
+        "webhookId": "7bbdecc3-7824-48fc-af0d-c769dba08f76",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "CnrFlvc7dRHZu5hC",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "workflowId": {
+            "__rl": true,
+            "value": "http://localhost:5678/workflow/kA81KTUGEimG5Fgp",
+            "mode": "url"
+          },
+          "requestOptions": {}
+        },
+        "type": "n8n-nodes-base.n8n",
+        "typeVersion": 1,
+        "position": [
+          1184,
+          144
+        ],
+        "id": "404b1698-6d65-4388-be89-a53578063740",
+        "name": "Get a workflow",
+        "credentials": {
+          "n8nApi": {
+            "id": "f353z3lTsWzQBo7l",
+            "name": "n8n account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const fileName = `${$json.name.replace(/[^a-z0-9_-]/gi, \"_\") || \"workflow\"}.json`;\nconst jsonContent = JSON.stringify($json, null, 2);\n\nreturn [\n  {\n    binary: {\n      data: await this.helpers.prepareBinaryData(Buffer.from(jsonContent), fileName, 'application/json'),\n    },\n    json: {\n      fileName,\n    },\n  },\n];\n"
+        },
+        "id": "47862433-5623-4319-8fb4-02b2b5c12a9b",
+        "name": "JSON to File",
+        "type": "n8n-nodes-base.code",
+        "position": [
+          1696,
+          256
+        ],
+        "typeVersion": 2
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "owner": {
+            "__rl": true,
+            "value": "https://github.com/Gutismall",
+            "mode": "url"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "Afeka_Guterman",
+            "mode": "list",
+            "cachedResultName": "Afeka_Guterman",
+            "cachedResultUrl": "https://github.com/Gutismall/Afeka_Guterman"
+          },
+          "filePath": "HW2/n8n_Workflow.json",
+          "fileContent": "={{ JSON.stringify($('n8n Trigger').first().json.workflow, null, 2) }}",
+          "commitMessage": "Save Workflow"
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          2208,
+          272
+        ],
+        "id": "b351e8a3-03ee-4f24-8bfe-edab8a2fb3dc",
+        "name": "Create a file",
+        "webhookId": "478e37d0-8602-450e-9b70-6d927738bf6a",
+        "credentials": {
+          "githubApi": {
+            "id": "6wElnNbpqiy9Z5hf",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "file",
+          "operation": "delete",
+          "owner": {
+            "__rl": true,
+            "value": "https://github.com/Gutismall",
+            "mode": "url"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "Afeka_Guterman",
+            "mode": "list",
+            "cachedResultName": "Afeka_Guterman",
+            "cachedResultUrl": "https://github.com/Gutismall/Afeka_Guterman"
+          },
+          "filePath": "HW2/n8n_Workflow.json",
+          "commitMessage": "delete file"
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          1968,
+          272
+        ],
+        "id": "be69153a-934a-437f-9ff4-69439e7d511c",
+        "name": "Delete a file",
+        "webhookId": "2ef3bb31-eac2-4d8a-9a24-8d7e08b710b0",
+        "executeOnce": false,
+        "credentials": {
+          "githubApi": {
+            "id": "6wElnNbpqiy9Z5hf",
+            "name": "GitHub account"
+          }
+        },
+        "onError": "continueRegularOutput"
+      }
+    ],
+    "connections": {
+      "Airtable Trigger": {
+        "main": [
+          [
+            {
+              "node": "Message a model",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Message a model": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          [
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get a workflow": {
+        "main": [
+          [
+            {
+              "node": "JSON to File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Delete a file": {
+        "main": [
+          [
+            {
+              "node": "Create a file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "JSON to File": {
+        "main": [
+          [
+            {
+              "node": "Delete a file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook": {
+        "main": [
+          [
+            {
+              "node": "Get a workflow",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Ari Guterman",
+    "name": "Version 9dc8ea1c",
+    "description": "",
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2025-12-21T17:37:50.339Z",
+        "id": 8,
+        "workflowId": "kA81KTUGEimG5Fgp",
+        "versionId": "9dc8ea1c-13a0-433d-a50e-7a68b0a02d9c",
+        "event": "activated",
+        "userId": "84267641-64ba-4a5e-b2ce-599124e9087e"
+      }
+    ]
+  }
+}
