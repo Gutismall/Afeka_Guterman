@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hong Kong Travel Guide</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        header {
+            text-align: center;
+            padding-bottom: 25px;
+            border-bottom: 4px solid #db0007; /* HK Flag Red */
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #db0007;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #333;
+            border-left: 5px solid #db0007;
+            padding-left: 15px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .image-gallery {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        .image-gallery img {
+            width: 32%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+        }
+        .image-gallery img:hover {
+            transform: scale(1.02);
+        }
+        .attractions ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .attractions li {
+            background-color: #fff0f0;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-left: 4px solid #db0007;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .attractions li:hover {
+            background-color: #ffe5e5;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Hong Kong</h1>
+            <p>Asia's World City: Explore the vibrant blend of colonial history, modern skyscrapers, and natural beauty.</p>
+        </header>
+
+        <section class="image-gallery">
+            <img src="https://image.pollinations.ai/prompt/Hong%20Kong%20landmark?seed=1" alt="Hong Kong iconic skyline at night" title="Victoria Harbour">
+            <img src="https://image.pollinations.ai/prompt/Hong%20Kong%20landmark?seed=2" alt="Star Ferry crossing the harbor" title="Star Ferry">
+            <img src="https://image.pollinations.ai/prompt/Hong%20Kong%20landmark?seed=3" alt="Tian Tan Buddha on Lantau Island" title="Big Buddha">
+        </section>
+
+        <section class="attractions">
+            <h2>Top 5 Must-Visit Attractions</h2>
+            <ul>
+                <li>The Peak (Victoria Peak): Enjoy breathtaking views of the city skyline and harbor.</li>
+                <li>Star Ferry: Take the iconic, affordable ride across Victoria Harbour.</li>
+                <li>Tian Tan Buddha (Big Buddha): Visit the massive bronze statue on Lantau Island.</li>
+                <li>Tsim Sha Tsui Promenade: Perfect spot for the Symphony of Lights show.</li>
+                <li>Man Mo Temple: A serene and atmospheric traditional Chinese temple.</li>
+            </ul>
+        </section>
+        
+        <section class="map-section">
+            <h2>Attractions Map</h2>
+            <div id="map"></div>
+        </section>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // 1. Define Attractions and Coordinates
+        const attractions = [
+            // [Name, Latitude, Longitude]
+            { name: "The Peak (Victoria Peak)", lat: 22.2709, lng: 114.1481 },
+            { name: "Star Ferry Pier (Tsim Sha Tsui)", lat: 22.2950, lng: 114.1687 },
+            { name: "Tian Tan Buddha", lat: 22.2541, lng: 113.9056 },
+            { name: "Tsim Sha Tsui Promenade", lat: 22.2930, lng: 114.1730 },
+            { name: "Man Mo Temple", lat: 22.2848, lng: 114.1508 }
+        ];
+
+        // 2. Initialize the Map
+        // We set a temporary center, which will be overwritten by fitBounds
+        const map = L.map('map').setView([22.3193, 114.1694], 11); 
+
+        // 3. Add Tile Layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        let markerBounds = [];
+
+        // 4. Loop through attractions, add markers, and collect coordinates
+        attractions.forEach(attraction => {
+            const latLng = [attraction.lat, attraction.lng];
+            
+            L.marker(latLng)
+                .addTo(map)
+                .bindPopup(`<b>${attraction.name}</b>`)
+                .openPopup();
+            
+            markerBounds.push(latLng);
+        });
+        
+        // 5. Fit map to include all markers
+        if (markerBounds.length > 0) {
+            map.fitBounds(markerBounds, { padding: [50, 50] }); 
+        }
+
+    </script>
+</body>
+</html>
