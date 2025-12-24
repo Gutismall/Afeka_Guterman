@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>A Comprehensive Guide to Paris, France</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #003366;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #003366;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .photo-gallery img {
+            width: 100%;
+            max-width: 220px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .photo-gallery img:hover {
+            transform: scale(1.05);
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .attractions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .attractions li {
+            background: white;
+            padding: 15px;
+            border-left: 5px solid #ffcc00;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>A Comprehensive Guide to Paris, France</h1>
+    </header>
+
+    <div class="container">
+        
+        <h2>Gallery: The City of Lights</h2>
+
+        <div class="photo-gallery">
+            <!-- Requirement: At least 5 photos -->
+            <img src="https://image.pollinations.ai/prompt/Eiffel%20Tower,Paris?seed=1" alt="Eiffel Tower">
+            <img src="https://image.pollinations.ai/prompt/Louvre%20Museum,Paris?seed=2" alt="Louvre Museum">
+            <img src="https://image.pollinations.ai/prompt/Notre%20Dame%20Cathedral,Paris?seed=3" alt="Notre Dame Cathedral">
+            <img src="https://image.pollinations.ai/prompt/Arc%20de%20Triomphe,Paris?seed=4" alt="Arc de Triomphe">
+            <img src="https://image.pollinations.ai/prompt/Paris%20street%20view?seed=5" alt="Classic Parisian street">
+            <img src="https://image.pollinations.ai/prompt/Paris%20Seine%20River%20view?seed=6" alt="Seine River view">
+        </div>
+
+        <section class="attractions">
+            <h2>Top 5 Must-See Attractions</h2>
+            <ul>
+                <li><strong>Eiffel Tower:</strong> The iconic wrought-iron lattice tower on the Champ de Mars.</li>
+                <li><strong>Louvre Museum:</strong> Home to thousands of works of art, including the Mona Lisa.</li>
+                <li><strong>Notre Dame Cathedral:</strong> A stunning medieval Catholic cathedral on the Île de la Cité.</li>
+                <li><strong>Arc de Triomphe:</strong> Honors those who fought and died for France in the French Revolutionary and Napoleonic Wars.</li>
+                <li><strong>Sacré-Cœur Basilica:</strong> A Roman Catholic church and minor basilica atop the Montmartre hill.</li>
+            </ul>
+        </section>
+
+        <h2>Interactive Map of Attractions</h2>
+        <div id="map"></div>
+
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map').setView([48.8566, 2.3522], 12); // Default center Paris
+
+        // Add Tile Layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // Attraction Data (5 real attractions in Paris)
+        const attractions = [
+            { name: "Eiffel Tower", lat: 48.8584, lng: 2.2945 },
+            { name: "Louvre Museum", lat: 48.8606, lng: 2.3376 },
+            { name: "Notre Dame Cathedral", lat: 48.8529, lng: 2.3499 },
+            { name: "Arc de Triomphe", lat: 48.8738, lng: 2.2950 },
+            { name: "Sacré-Cœur Basilica", lat: 48.8867, lng: 2.3431 }
+        ];
+
+        let markers = [];
+        
+        // Loop through attractions and add markers
+        attractions.forEach(attraction => {
+            const marker = L.marker([attraction.lat, attraction.lng])
+                .addTo(map)
+                .bindPopup(`<b>${attraction.name}</b>`);
+            markers.push(marker);
+        });
+
+        // Calculate bounds to center map on all markers
+        if (markers.length > 0) {
+            const group = new L.FeatureGroup(markers);
+            map.fitBounds(group.getBounds(), { padding: [50, 50] });
+        }
+
+    </script>
+
+</body>
+</html>
