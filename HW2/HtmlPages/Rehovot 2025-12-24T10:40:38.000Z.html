@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Travel Guide: Rehovot, Israel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* Internal CSS */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e8f3f8;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #004d99;
+            text-align: center;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #0066cc;
+            border-bottom: 3px solid #e0e7ee;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .attraction {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-left: 6px solid #004d99;
+            background-color: #f7f9fc;
+            border-radius: 6px;
+        }
+        .attraction h3 {
+            margin-top: 0;
+            color: #1a75ff;
+            font-size: 1.5em;
+        }
+        .image-gallery {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .image-gallery img {
+            width: 32%;
+            height: 200px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .image-gallery img:hover {
+            transform: scale(1.03);
+        }
+        #map {
+            height: 400px; 
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Rehovot: The City of Science and Citrus Heritage</h1>
+    
+    <p>
+        Rehovot (meaning 'Wide Spaces') is a cornerstone of modern Israeli history, renowned globally as a center for scientific excellence and agricultural innovation. Established in 1890 during the First Aliyah, it was initially an agricultural settlement built on citrus groves—a heritage that is still evident in its beautiful older neighborhoods. Unlike Israel's sprawling metropolitan areas, Rehovot offers a unique atmosphere where pioneering history, world-class research, and tranquil suburban life intertwine.
+    </p>
+    <p>
+        Visitors to Rehovot are often drawn by the magnetic presence of the Weizmann Institute of Science, which infuses the entire city with an intellectual energy. Beyond academia, the city holds significant historical secrets, including vital underground defense installations. This guide explores the diverse facets of Rehovot, ensuring you discover its scientific wonders, historical depth, and peaceful green spaces.
+    </p>
+
+    <h2>Glimpses of Rehovot</h2>
+    <div class="image-gallery">
+        <img src="https://image.pollinations.ai/prompt/Rehovot%20landmark?seed=1" alt="Weizmann Institute of Science">
+        <img src="https://image.pollinations.ai/prompt/Rehovot%20landmark?seed=2" alt="Ayalon Institute historical site">
+        <img src="https://image.pollinations.ai/prompt/Rehovot%20landmark?seed=3" alt="Rehovot City View">
+    </div>
+
+    <h2>Top Attractions and Descriptive Locations</h2>
+
+    <div class="attraction">
+        <h3>1. The Weizmann Institute of Science</h3>
+        <p>
+            The heart of Rehovot’s modern identity. This multidisciplinary research powerhouse is famous for producing breakthroughs in chemistry, physics, and biology. The campus itself is an architectural and horticultural delight, designed to inspire. Visitors are welcome to wander the pristine grounds, featuring modernist buildings, lush gardens, and reflecting pools, offering a glimpse into one of the world's most innovative academic environments. It's a peaceful space contrasting sharply with the intellectual intensity contained within its labs.
+        </p>
+    </div>
+
+    <div class="attraction">
+        <h3>2. Ayalon Institute (Secret Bullet Factory)</h3>
+        <p>
+            A profound historical site revealing a fascinating chapter of pre-state Israel. From 1945 to 1948, concealed beneath the unassuming facade of a kibbutz laundry and bakery, a highly sophisticated underground factory secretly manufactured millions of 9mm bullets for the Haganah (the Jewish defense organization). The guided tour immerses visitors in the atmosphere of secrecy and danger, demonstrating the ingenuity of the young pioneers who worked tirelessly beneath the noses of the British Mandate forces above ground.
+        </p>
+    </div>
+
+    <div class="attraction">
+        <h3>3. Weizmann House</h3>
+        <p>
+            A must-see for history and architecture enthusiasts, the Weizmann House served as the residence of Dr. Chaim Weizmann, Israel’s first President, and his wife, Vera. Designed by the internationally acclaimed German-Jewish architect Erich Mendelsohn, the house is a stunning example of International Style architecture adapted to the Israeli climate. Preserved exactly as the Weizmanns left it, the museum provides a powerful personal narrative about the visionary leader and the early decades of the Zionist movement, set against a backdrop of sophisticated design.
+        </p>
+    </div>
+
+    <div class="attraction">
+        <h3>4. The Clore Science Garden</h3>
+        <p>
+            Located adjacent to the Weizmann Institute, this award-winning science park transforms abstract concepts into tangible, fun experiences. Unlike traditional museums, the Clore Garden encourages interaction: you can navigate a maze designed according to scientific principles, generate power, or learn about optics and acoustics using large, cleverly engineered outdoor installations. It’s an ideal educational outing that appeals to children and adults alike, proving that the pursuit of knowledge can be immensely playful.
+        </p>
+    </div>
+
+    <div class="attraction">
+        <h3>5. Park HaMeyasedim (Founders' Park)</h3>
+        <p>
+            This central city park embodies the community spirit of Rehovot. Historically significant, as it lies close to the original core of the settlement, the park today provides a large, beautifully maintained green oasis. It features mature trees, walking trails, and modern amenities, acting as a crucial gathering point for families. It offers a perfect opportunity for visitors to observe daily Israeli life and relax away from the busy academic centers.
+        </p>
+    </div>
+
+    <h2>Interactive Map of Key Locations</h2>
+    <div id="map"></div>
+
+</div>
+
+<!-- Leaflet Initialization Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Real coordinates for the 5 attractions
+        const attractions = [
+            { name: "Weizmann Institute of Science", lat: 31.9025, lng: 34.8058 },
+            { name: "Ayalon Institute (Secret Bullet Factory)", lat: 31.8680, lng: 34.8210 },
+            { name: "Weizmann House", lat: 31.9023, lng: 34.8050 },
+            { name: "Clore Science Garden", lat: 31.9040, lng: 34.8050 },
+            { name: "Park HaMeyasedim (Founders' Park)", lat: 31.8900, lng: 34.8080 }
+        ];
+
+        // Initialize Map
+        const map = L.map('map'); 
+
+        // Add Tile Layer (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const boundsArray = [];
+
+        // Add Markers and collect bounds
+        attractions.forEach(function(attraction) {
+            const marker = L.marker([attraction.lat, attraction.lng]).addTo(map);
+            marker.bindPopup(`<b>${attraction.name}</b>`).openPopup();
+            boundsArray.push([attraction.lat, attraction.lng]);
+        });
+
+        // Fit the map view to contain all markers
+        if (boundsArray.length > 0) {
+            map.fitBounds(boundsArray, { padding: [50, 50] });
+        }
+    });
+</script>
+</body>
+</html>
