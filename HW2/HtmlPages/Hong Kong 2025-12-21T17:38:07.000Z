@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hong Kong Travel Guide</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+        .gallery {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        .gallery img {
+            width: 30%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .attraction-list {
+            list-style: none;
+            padding: 0;
+        }
+        .attraction-list li {
+            background: #e9f7ff;
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 5px solid #007bff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Hong Kong</h1>
+
+        <p>Hong Kong is a vibrant metropolis, famous for its towering skyline, deep natural harbor, and a unique blend of British colonial heritage and traditional Chinese culture. Explore the fusion of financial power, stunning natural landscapes, and unparalleled culinary scene.</p>
+
+        <section class="gallery">
+            <img src="https://image.pollinations.ai/prompt/Hong%20Kong%20landmark?seed=1" alt="Hong Kong Skyline at night">
+            <img src="https://image.pollinations.ai/prompt/Hong%20Kong%20street%20market?seed=2" alt="Hong Kong Street Market">
+            <img src="https://image.pollinations.ai/prompt/Hong%20Kong%20Victoria%20Peak?seed=3" alt="Victoria Peak view">
+        </section>
+
+        <h2>Top Attractions</h2>
+
+        <ul class="attraction-list">
+            <li data-lat="22.2840" data-lon="114.1500" data-name="Victoria Peak">Victoria Peak (The Peak)</li>
+            <li data-lat="22.2800" data-lon="114.1600" data-name="Star Ferry">Star Ferry Crossing</li>
+            <li data-lat="22.3168" data-lon="114.1710" data-name="Tsim Sha Tsui Promenade">Tsim Sha Tsui Promenade (Symphony of Lights)</li>
+            <li data-lat="22.2778" data-lon="114.1668" data-name="Lan Kwai Fong">Lan Kwai Fong (Nightlife District)</li>
+            <li data-lat="22.2828" data-lon="114.1539" data-name="Central Mid-Levels Escalator">Central–Mid-Levels Escalator</li>
+        </ul>
+
+        <h2>Explore on Map</h2>
+
+        <div id="map"></div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Define map centered roughly on Hong Kong
+            const map = L.map('map').setView([22.30, 114.17], 12); 
+
+            // Add the tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Get attraction data from the list items
+            const attractions = [];
+            const attractionElements = document.querySelectorAll('.attraction-list li');
+            
+            attractionElements.forEach(el => {
+                attractions.push({
+                    lat: parseFloat(el.getAttribute('data-lat')),
+                    lon: parseFloat(el.getAttribute('data-lon')),
+                    name: el.getAttribute('data-name')
+                });
+            });
+
+            const markerGroup = L.featureGroup();
+
+            // Loop through attractions to add markers
+            attractions.forEach(attraction => {
+                const marker = L.marker([attraction.lat, attraction.lon])
+                    .bindPopup(`<b>${attraction.name}</b>`);
+                
+                markerGroup.addLayer(marker);
+            });
+
+            // Add the group to the map
+            markerGroup.addTo(map);
+
+            // Fit the map view to the markers bounds
+            if (markerGroup.getLayers().length > 0) {
+                map.fitBounds(markerGroup.getBounds().pad(0.1)); // Padding ensures markers aren't right on the edge
+            }
+        });
+    </script>
+
+</body>
+</html>
