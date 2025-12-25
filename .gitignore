@@ -1,10 +1,14 @@
 # OS files
 .DS_Store
 *.docx
+*.pptx
+CW/
+*.pdf
 ._*
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+*Dockerfile
 
 # Logs
 logs/
